@@ -24,7 +24,7 @@ class PT70_PECVD(LayerProcess):
                                 'Tool',
                                 'Deposition Material',
                                 'Thickness Target',
-                                'DC Response (average)']
+                                'DC Response']
 
         self.required_steps  = ['Deposition Time',
                                 'Pre-seed Time',

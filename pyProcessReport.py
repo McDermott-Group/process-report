@@ -13,16 +13,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 from datetime import datetime
 
-try:
-    from pylatex import Section, Subsection, Subsubsection, LargeText, MediumText, \
+from pylatex import Section, Subsection, Subsubsection, LargeText, MediumText, \
         PageStyle, Document, MiniPage, Head, Foot, LineBreak, \
         simple_page_number, Figure, Package
-    from pylatex.utils import bold, italic, NoEscape
-    from pylatex.base_classes import Command
-except ImportError:
-    raise ImportError('Please install PyLaTeX (available via pip install pylatex).')
+from pylatex.utils import bold, italic, NoEscape
+from pylatex.base_classes import Command
 
 
 class ProcessReport(object):
@@ -151,6 +149,9 @@ class LayerProcess(object):
     def add_steps(self, steps_dict):
         for key in steps_dict:
             self.add_step(key, steps_dict[key])
+
+    def get_required(self):
+        return self.required_steps, self.required_params
 
     def verify_required(self):
 

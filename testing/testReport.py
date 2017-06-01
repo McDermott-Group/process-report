@@ -11,7 +11,7 @@ V2dep.add_parameters({'Recipe Name': 'SiOxide2.ch1',
                       'Tool': 'PT 70',
                       'Deposition Material': 'SiOx',
                       'Thickness Target': '180 nm',
-                      'DC Response (average)': '-18 V'})
+                      'DC Response': '-18 V'})
 V2dep.add_steps({'Deposition Time': '350 s',
                  'Pre-seed Time': '500 s',
                  'Pre-clean Time (x2)': '150 s'})

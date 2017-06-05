@@ -20,8 +20,8 @@
 *-converted-to.*
 # these rules might exclude image files for figures etc.
 # *.eps
-*.pdf
-*.tex
+.pdf
+.tex
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl

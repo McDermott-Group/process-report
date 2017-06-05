@@ -46,7 +46,7 @@ class ProcessReport(object):
 
         # SETTING MARGINS
         geometry_options = {"tmargin": "1in", "lmargin": "1in"}
-        self.doc = Document(geometry_options=geometry_options)
+        self.doc = Document(geometry_options = geometry_options)
 
         # SETTING HEADER/FOOTER OPTIONS
         header = PageStyle('header')
@@ -82,6 +82,8 @@ class ProcessReport(object):
 
             with self.doc.create(Section('Layer ' + self.layers[key].get_id(), numbering=self.numbering)):
                 self.doc.append(self.layers[key].get_comment())
+                if len(self.layers[key].get_images()) is not 0:
+                    self.build_layer_images(key)
 
                 for process in processes:
                     self.build_layer_process(processes[process])
@@ -97,6 +99,16 @@ class ProcessReport(object):
 
             if len(process.steps.keys()) > 0:
                 self.build_process_steps(process.steps)
+
+    def build_layer_images(self, layer):
+        for key in self.layers[layer].get_images():
+            with self.doc.create(Figure(position='h!')) as layer_pic:
+                layer_pic.add_image(key)
+                try:
+                    layer_pic.add_caption(self.layers[layer].get_images()[key])
+                except:
+                    raise ValueError('All images must be captioned.')
+
 
     def build_process_params(self, params):
         with self.doc.create(Subsubsection('Parameters', numbering=self.numbering)):
@@ -145,6 +157,7 @@ class Layer(object):
 
         self.process = {}
         self.num_process = 0
+        self.images = {}
 
     def get_id(self):
         return self.layer_id
@@ -156,6 +169,12 @@ class Layer(object):
         layer_process.verify_required()
         self.process[self.num_process] = layer_process
         self.num_process += 1
+
+    def add_image(self, file, caption):
+        self.images[file] = caption
+
+    def get_images(self):
+        return self.images
 
     def get_num_processes(self):
         return self.num_process

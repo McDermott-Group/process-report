@@ -41,7 +41,7 @@ V2etch.add_steps([{'step number': 2, 'step': 'Pre-seed Time (s)', 'value': '0'},
 # Add processes to the appropriate layers
 V2.add_process(V2dep)
 V2.add_process(V2etch)
-
+V2.add_image('kitten.jpg', 'This is a kitten. It does not care about you.')
 
 # Add layers to the report
 report.add_layer(M1)

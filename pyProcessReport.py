@@ -18,9 +18,10 @@ from datetime import datetime
 
 from pylatex import Section, Subsection, Subsubsection, LargeText, MediumText, \
         PageStyle, Document, MiniPage, Head, Foot, LineBreak, \
-        simple_page_number, Figure, Package
+        simple_page_number, Figure, Package, Tabular
 from pylatex.utils import bold, italic, NoEscape
 from pylatex.base_classes import Command
+from pylatex.lists import Enumerate, Description
 
 
 class ProcessReport(object):
@@ -29,6 +30,7 @@ class ProcessReport(object):
         self.wafer_name = wafer_name
         self.layers = {}
         self.numLayers = 0
+        self.numSteps = 0
 
         if section_numbering is None:
             self.numbering = True
@@ -76,9 +78,48 @@ class ProcessReport(object):
     def build_layers(self):
 
         for key in self.layers:
+            processes = self.layers[key].get_processes()
 
-                with self.doc.create(Section('Layer ' + self.layers[key].get_id(), numbering=self.numbering)):
-                    self.doc.append(self.layers[key].get_comment())
+            with self.doc.create(Section('Layer ' + self.layers[key].get_id(), numbering=self.numbering)):
+                self.doc.append(self.layers[key].get_comment())
+
+                for process in processes:
+                    self.build_layer_process(processes[process])
+
+    def build_layer_process(self, process):
+        with self.doc.create(Subsection(numbering=self.numbering,
+                                        title=process.process_name + ' (' + process.get_datestr() + ')')):
+            if process.comment is not None:
+                self.doc.append(process.comment)
+
+            if len(process.params.keys()) > 0:
+                self.build_process_params(process.params)
+
+            if len(process.steps.keys()) > 0:
+                self.build_process_steps(process.steps)
+
+    def build_process_params(self, params):
+        with self.doc.create(Subsubsection('Parameters', numbering=self.numbering)):
+            # with self.doc.create(Description()) as desc:
+            #     for param,val in sorted(params.items()):
+            #         desc.add_item(param, NoEscape(Command('hfill').dumps()) +  ' ' + val)
+
+            with self.doc.create(Tabular('l|c')) as table:
+                #table.add_row('Parameters','a')
+                table.add_hline()
+                for param,val in sorted(params.items()):
+                    table.add_row((bold(param), val))
+
+    def build_process_steps(self, steps):
+        with self.doc.create(Subsubsection('Steps', numbering=self.numbering)):
+            if self.numSteps == 0:
+                self.numSteps += 1
+            with self.doc.create(Enumerate(enumeration_symbol=r"\arabic*)", options={'start': self.numSteps})) as enum:
+                for key in steps:
+                    enum.add_item(steps[key]['step'] + ': ' + steps[key]['value'])
+                    self.numSteps += 1
+
+
 
     def build_pdf(self, filename=None, save_tex=None):
         if filename is not None:
@@ -102,8 +143,8 @@ class Layer(object):
         self.layer_id = layer_id
         self.layer_comment = layer_comment
 
-        self.step = {}
-        self.numSteps = 0
+        self.process = {}
+        self.num_process = 0
 
     def get_id(self):
         return self.layer_id
@@ -111,22 +152,29 @@ class Layer(object):
     def get_comment(self):
         return self.layer_comment
 
-    def add_step(self, layer_step):
-        self.step[self.numSteps] = layer_step
-        self.numSteps += 1
+    def add_process(self, layer_process):
+        layer_process.verify_required()
+        self.process[self.num_process] = layer_process
+        self.num_process += 1
 
-    def get_num_steps(self):
-        return self.numSteps
+    def get_num_processes(self):
+        return self.num_process
+
+    def get_processes(self):
+        return self.process
 
 
 class LayerProcess(object):
 
-    def __init__(self, step_date):
+    def __init__(self, process_name, process_date, process_comment):
+
+        self.process_name = process_name
+        self.comment = process_comment
 
         # Expected string format for date: ddmmmyyyy (e.g. 30aug2017)
-        self.step_date = step_date
-        self.step_datetime = datetime.strptime(self.step_date, '%d%b%Y')
-        self.step_datestr = self.step_datetime.strftime('%b %d, %Y')
+        self.process_date = process_date
+        self.process_datetime = datetime.strptime(self.process_date, '%d%b%Y')
+        self.process_datestr = self.process_datetime.strftime('%b %d, %Y')
 
         # parameters listed as bullet points
         self.params = {}
@@ -137,18 +185,31 @@ class LayerProcess(object):
         self.required_steps = []
 
     def add_parameter(self, param, value):
-        self.params[param] = value
+        if param in self.params.keys():
+            self.update_parameter(param, value)
+        else:
+            self.params[param] = value
 
     def add_parameters(self, params_dict):
         for key in params_dict:
             self.add_parameter(key, params_dict[key])
 
-    def add_step(self, step, value):
-        self.steps[step] = value
+    def get_parameter(self, param):
+        return self.params[param]
 
-    def add_steps(self, steps_dict):
-        for key in steps_dict:
-            self.add_step(key, steps_dict[key])
+    def update_parameter(self, param, new_value):
+        self.params[param] = new_value
+
+    def add_step(self, step_dict):
+
+        if step_dict['step number'] in self.steps:
+            raise ValueError('{}: Step number {} already in use.'.format(step_dict['step'], step_dict['step number']))
+
+        self.steps[step_dict['step number']] = step_dict
+
+    def add_steps(self, step_dict_list):
+        for step_dict in step_dict_list:
+            self.add_step(step_dict)
 
     def get_required(self):
         return self.required_steps, self.required_params
@@ -156,17 +217,19 @@ class LayerProcess(object):
     def verify_required(self):
 
         # Checks for both sets of required parameters for the layer process
-        if not (all(param in self.required_params for param in self.params) and
-                all(step in self.required_steps for step in self.steps)):
+        if not all(param in self.required_params for param in self.params):
 
             for param in self.required_params:
                 if param not in self.params:
                     raise ValueError('Required parameter missing: {}'.format(param))
 
+        if not all(step in self.required_steps for step in self.steps):
+
             for step in self.required_steps:
-                if step not in self.steps:
+                if step not in (self.steps[step_num]['step'] for step_num in self.steps):
                     raise ValueError('Required step missing: {}'.format(step))
         else:
             return True
+
     def get_datestr(self):
-        return self.step_datestr
+        return self.process_datestr

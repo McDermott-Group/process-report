@@ -1,0 +1,105 @@
+\documentclass{article}%
+\usepackage[T1]{fontenc}%
+\usepackage[utf8]{inputenc}%
+\usepackage{lmodern}%
+\usepackage{textcomp}%
+\usepackage{lastpage}%
+\usepackage[tmargin=1in,lmargin=1in]{geometry}%
+\usepackage{ragged2e}%
+\usepackage{enumitem}%
+\usepackage{fancyhdr}%
+%
+\fancypagestyle{header}{ 
+\renewcommand{\headrulewidth}{0pt}%
+\renewcommand{\footrulewidth}{0pt}%
+\fancyhead{ 
+}%
+\fancyfoot{ 
+}%
+\fancyfoot[R]{ 
+Page \thepage
+}%
+\fancyfoot[L]{ 
+Report Generated: Jun 04, 2017
+}
+}%
+\usepackage{hyperref}%
+%
+\begin{document}%
+\normalsize%
+\pagestyle{header}%
+\pagenumbering{roman}%
+\begin{minipage}{\textwidth}%
+\centering%
+\begin{Large}%
+\textbf{SFQ Wafer T053017A}%
+\end{Large}%
+\linebreak%
+\begin{large}%
+\textbf{Processing Report}%
+\end{large}%
+\end{minipage}%
+\tableofcontents%
+\pagebreak%
+\pagenumbering{arabic}%
+\setcounter{page}{1}%
+\section{Layer M1}%
+Bottom electrode of JJ stack and DC/SFQ shunt inductor.
+
+%
+\section{Layer V2}%
+JJ pocket definition in dielectric.%
+\subsection{PECVD Deposition (Aug 01, 2017)}%
+Ezpz%
+\subsubsection{Parameters}%
+\begin{tabular}{l|c}%
+\hline%
+\textbf{DC Response (V)}&{-}18\\%
+\textbf{Deposition Material}&SiOx\\%
+\textbf{Platen Temperature (C)}&250\\%
+\textbf{Recipe Name (ch1)}&SiOxide2\\%
+\textbf{Thickness Target (nm)}&180\\%
+\textbf{Tool}&PT 70\\%
+\end{tabular}
+
+%
+\subsubsection{Steps}%
+\begin{enumerate}[label=\arabic*),start=1]%
+\item%
+Pre{-}clean Time (x2, s): 150%
+\item%
+Pre{-}seed Time (s): 500%
+\item%
+Deposition Time (s): 350%
+\end{enumerate}
+
+%
+\subsection{Etching (Aug 01, 2017)}%
+Etch the Ezpz%
+\subsubsection{Parameters}%
+\begin{tabular}{l|c}%
+\hline%
+\textbf{DC Response (V)}&272\\%
+\textbf{Etched Material}&PECVD SiOx\\%
+\textbf{Platen}&Carbon\\%
+\textbf{Recipe Name}&50CHF3\\%
+\textbf{Tool}&Unaxis 790\\%
+\end{tabular}
+
+%
+\subsubsection{Steps}%
+\begin{enumerate}[label=\arabic*),start=4]%
+\item%
+Pre{-}clean Time (s): 300%
+\item%
+Pre{-}seed Time (s): 0%
+\item%
+Etch Time (s): 480%
+\end{enumerate}
+
+%
+\section{Layer M2}%
+JJ oxidation and wiring layer.
+
+%
+\end{document}

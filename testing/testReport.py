@@ -1,5 +1,4 @@
 from pyProcessReport import *
-from pyLayerProcess import *
 
 # A project name as well as wafer name are required to build a report
 report=ProcessReport('SFQ','T053017A')

@@ -117,7 +117,7 @@ class ProcessReport(object):
             #         desc.add_item(param, NoEscape(Command('hfill').dumps()) +  ' ' + val)
 
             with self.doc.create(Tabular('l|c')) as table:
-                #table.add_row('Parameters','a')
+                # table.add_row('Parameters','a')
                 table.add_hline()
                 for param,val in sorted(params.items()):
                     table.add_row((bold(param), val))

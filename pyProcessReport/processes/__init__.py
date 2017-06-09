@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from .processes import *
-from .layer import Layer
-from .layerProcess import LayerProcess
-from .pyProcessReport import ProcessReport
+from .etch import *
+from .deposition import *
+from .lithography import *

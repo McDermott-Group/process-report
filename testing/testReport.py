@@ -1,7 +1,7 @@
 from pyProcessReport import *
 
 # A project name as well as wafer name are required to build a report
-report=ProcessReport('SFQ','T053017A')
+report=ProcessReport('SFQ','WaferT053017A')
 
 # Building the appropriate layers to which processes will be later added
 M1 = Layer('M1', layer_comment='Bottom electrode of JJ stack and DC/SFQ shunt inductor.' )

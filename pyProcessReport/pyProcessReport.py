@@ -66,7 +66,7 @@ class ProcessReport(object):
 
         # PAGE HEADER
         with self.doc.create(MiniPage(align='c')):
-            self.doc.append(LargeText(bold(self.project_name + ' Wafer ' + self.wafer_name)))
+            self.doc.append(LargeText(bold(self.project_name + ' ' + self.wafer_name)))
             self.doc.append(LineBreak())
             self.doc.append(MediumText(bold('Processing Report')))
 
@@ -90,7 +90,10 @@ class ProcessReport(object):
 
     def build_layer_process(self, process):
         with self.doc.create(Subsection(numbering=self.numbering,
-                                        title=process.process_name + ' (' + process.get_datestr() + ')')):
+                                        title=process.process_name)):
+            self.doc.append(italic(process.get_datestr()))
+            self.doc.append(Command('newline'))
+            self.doc.append(LineBreak())
             if process.comment is not None:
                 self.doc.append(process.comment)
 
@@ -111,19 +114,19 @@ class ProcessReport(object):
 
 
     def build_process_params(self, params):
-        with self.doc.create(Subsubsection('Parameters', numbering=self.numbering)):
+        with self.doc.create(Subsubsection('Parameters', numbering=False)):
             # with self.doc.create(Description()) as desc:
             #     for param,val in sorted(params.items()):
             #         desc.add_item(param, NoEscape(Command('hfill').dumps()) +  ' ' + val)
 
             with self.doc.create(Tabular('l|c')) as table:
                 # table.add_row('Parameters','a')
-                table.add_hline()
+                # table.add_hline()
                 for param,val in sorted(params.items()):
                     table.add_row((bold(param), val))
 
     def build_process_steps(self, steps):
-        with self.doc.create(Subsubsection('Steps', numbering=self.numbering)):
+        with self.doc.create(Subsubsection('Steps', numbering=False)):
             if self.numSteps == 0:
                 self.numSteps += 1
             with self.doc.create(Enumerate(enumeration_symbol=r"\arabic*)", options={'start': self.numSteps})) as enum:

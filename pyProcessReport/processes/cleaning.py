@@ -1,15 +1,16 @@
 from pyProcessReport.layerProcess import LayerProcess
 
 
-class Strip(LayerProcess):
-    def __init__(self, process_date, process_comment=None):
+class Cleaning(LayerProcess):
+    def __init__(self, process_date, process_name, process_comment=None):
 
-        self.process_name = 'Resist Removal'
+        self.process_name = process_name
 
         LayerProcess.__init__(self, process_name = self.process_name,
                               process_date = process_date,
                               process_comment = process_comment)
 
-        self.required_params = ['Removal Temperature (C)']
+        # this is purposefully left wide open since cleaning/stripping is so variable
+        self.required_params = []
 
         self.required_steps = []

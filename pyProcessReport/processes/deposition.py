@@ -73,3 +73,24 @@ class PT70PECVD(LayerProcess):
                                 'Pre-clean Time (x2, s)']
 
         self.add_parameter('Tool', 'PT 70')
+
+
+class Evaporator(LayerProcess):
+    def __init__(self, process_date, process_comment=None):
+
+        self.process_name = 'Evaporation'
+
+        LayerProcess.__init__(self, process_name = self.process_name,
+                              process_date = process_date,
+                              process_comment = process_comment)
+
+        self.required_params = ['Base Pressure (Torr)',
+                                'Indium Heat Sinking?',
+                                'Tool',
+                                'Evaporated Material',
+                                'Target Thickness (nm)',
+                                'Ion Mill?']
+
+        self.required_steps  = ['Evaporated Thickness (nm) at rate (A/s)']
+
+        self.add_parameter('Tool', 'McDermott Evaporator')
